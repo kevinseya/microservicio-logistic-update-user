@@ -28,7 +28,7 @@ This project is a simple REST API created with Spring Boot that allows managing 
 
 3. The application run on: `http://localhost:8080`.
 
-## Uso de los Endpoints
+## Use of endpoint
 
 ### 1. PUT /api/users/update/{id}
 
