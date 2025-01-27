@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "Users", description = "Endpoints for managing users")
@@ -31,19 +33,19 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Server error")
     })
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+    public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody User updatedUser) {
         try {
-            System.out.println("Actualizando usuario con ID: " + id);
+            System.out.println("Updating user with ID: " + id);
             User user = userService.updateUser(id, updatedUser);
             return ResponseEntity.ok(user);
         } catch (ResponseStatusException e) {
-            System.err.println("Error al actualizar el usuario: " + e.getMessage());
+            System.err.println("Error updating user: " + e.getMessage());
             throw e; // Propagar ResponseStatusException para mantener los códigos HTTP personalizados
         } catch (Exception e) {
-            System.err.println("Error inesperado: " + e.getMessage());
+            System.err.println("Error unexpected: " + e.getMessage());
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error inesperado al actualizar el usuario: " + e.getMessage(), e
+                    "Error updating user: " + e.getMessage(), e
             );
         }
     }
