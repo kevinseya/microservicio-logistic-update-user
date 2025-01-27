@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Server error")
     })
-    public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody User updatedUser) {
+    public ResponseEntity<User> updateUser(@Valid @PathVariable UUID id, @RequestBody User updatedUser) {
         try {
             System.out.println("Updating user with ID: " + id);
             User user = userService.updateUser(id, updatedUser);
