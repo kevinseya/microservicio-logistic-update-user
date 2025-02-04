@@ -5,6 +5,7 @@ import com.microserviciologistic.updateuser.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,29 +16,35 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User updateUser(UUID userId, User updatedUser) {
         try {
-            Optional<User> existingUser = userRepository.findById(userId);
-            if (existingUser.isPresent()) {
-                User user = existingUser.get();
+            Optional<User> existingUserOptional = userRepository.findById(userId);
+            if (existingUserOptional.isPresent()) {
+                User user = existingUserOptional.get();
+
                 user.setName(updatedUser.getName());
                 user.setLastname(updatedUser.getLastname());
                 user.setEmail(updatedUser.getEmail());
                 user.setPhone(updatedUser.getPhone());
+
+                if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+                    user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+                }
 
                 return userRepository.save(user);
             } else {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + userId + " not found");
             }
         } catch (DataAccessException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error connection with database: " + e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error connecting with database: " + e.getMessage(), e);
         }
     }
-
 }

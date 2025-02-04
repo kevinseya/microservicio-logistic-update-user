@@ -41,7 +41,7 @@ public class UserController {
             return ResponseEntity.ok(user);
         } catch (ResponseStatusException e) {
             System.err.println("Error updating user: " + e.getMessage());
-            throw e; // Propagar ResponseStatusException para mantener los códigos HTTP personalizados
+            throw e;
         } catch (Exception e) {
             System.err.println("Error unexpected: " + e.getMessage());
             throw new ResponseStatusException(
