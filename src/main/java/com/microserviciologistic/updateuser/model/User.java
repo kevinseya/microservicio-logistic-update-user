@@ -47,7 +47,7 @@ public class User {
     @Column(nullable = false)
     @NotBlank(message = "Role is required")
     @Schema(description = "Role of the user", example = "ADMIN", required = true)
-    private String rol;
+    private String role;
 
 
     public UUID getId() {
@@ -104,11 +104,11 @@ public class User {
     }
 
     // Getter y Setter para rol
-    public String getRol() {
-        return rol;
+    public String getRole() {
+        return role;
     }
 
-    public void setRol(String rol) {
-        this.rol = rol;
+    public void setRole(String role) {
+        this.role = role;
     }
 }
