@@ -18,10 +18,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final WebSocketClientService webSocketClientService;
+
+
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, WebSocketClientService webSocketClientService ,PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.webSocketClientService = webSocketClientService;
+
     }
 
     public User updateUser(UUID userId, User updatedUser) {
@@ -34,12 +39,16 @@ public class UserService {
                 user.setLastname(updatedUser.getLastname());
                 user.setEmail(updatedUser.getEmail());
                 user.setPhone(updatedUser.getPhone());
+                user.setRole(updatedUser.getRole());
+
 
                 if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
                     user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
                 }
-
-                return userRepository.save(user);
+                User editUser = userRepository.save(user);
+                System.out.println("Enviando evento WebSocket para actualización de usuario...");
+                webSocketClientService.sendEvent("UPDATE", editUser);
+                return editUser;
             } else {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + userId + " not found");
             }
